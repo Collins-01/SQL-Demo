@@ -22,6 +22,7 @@ class Dog {
         id: json['id'],
         name: json['name'],
       );
+
   @override
   String toString() {
     return 'Dog{id: $id, name: $name, age: $age}';
