@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:sql_demo/UIs/dog_stream_view.dart';
 import 'package:sql_demo/UIs/dog_view.dart';
+import 'package:sql_demo/core/storage/dog_brite_db.dart';
 import 'package:sql_demo/core/storage/dog_db.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   DogDB().init();
+  DogBriteDB().init();
   runApp(const MyApp());
 }
 
@@ -15,10 +18,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: DogView());
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: DogStreamView(),
+    );
   }
 }
