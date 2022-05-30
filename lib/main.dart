@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sql_demo/UIs/contacts_view.dart';
 import 'package:sql_demo/UIs/dog_stream_view.dart';
 import 'package:sql_demo/UIs/dog_view.dart';
+import 'package:sql_demo/core/storage/chats_db.dart';
 import 'package:sql_demo/core/storage/dog_brite_db.dart';
 import 'package:sql_demo/core/storage/dog_db.dart';
 
@@ -8,7 +11,8 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   DogDB().init();
   DogBriteDB().init();
-  runApp(const MyApp());
+  ChatsDB().init();
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -22,7 +26,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: DogStreamView(),
+      home: const ContactsView(),
     );
   }
 }
