@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sql_demo/UIs/contacts_view.dart';
 import 'package:sql_demo/UIs/dog_stream_view.dart';
 import 'package:sql_demo/UIs/dog_view.dart';
+import 'package:sql_demo/UIs/messages_view.dart';
 import 'package:sql_demo/core/storage/chats_db.dart';
 import 'package:sql_demo/core/storage/dog_brite_db.dart';
 import 'package:sql_demo/core/storage/dog_db.dart';
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const ContactsView(),
+      home: ContactsView(),
     );
   }
 }

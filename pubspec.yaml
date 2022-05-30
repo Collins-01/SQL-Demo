@@ -39,6 +39,7 @@ dependencies:
   sqlbrite: ^2.2.0
   flutter_riverpod: ^1.0.3
   hooks_riverpod: ^1.0.3
+  faker: ^2.0.0
 
 dev_dependencies:
   flutter_test:

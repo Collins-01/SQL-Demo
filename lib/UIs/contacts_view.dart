@@ -1,60 +1,109 @@
-import 'dart:developer';
-
+import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sql_demo/core/models/contact_model.dart';
-import 'package:sql_demo/core/storage/chats_db.dart';
 
-class ContactsView extends ConsumerWidget {
-  const ContactsView({Key? key}) : super(key: key);
+import 'package:sql_demo/core/models/message_model.dart';
+import 'package:sql_demo/core/storage/contacts_db.dart';
+
+import 'package:sql_demo/core/storage/messages_db.dart';
+
+// ignore: use_key_in_widget_constructors
+class ContactsView extends StatefulWidget {
+  @override
+  State<ContactsView> createState() => _ContactsViewState();
+}
+
+class _ContactsViewState extends State<ContactsView> {
+  @override
+  void initState() {
+    ContactsDB().getAllContacts();
+    // MessagesDB().getAllMessages();
+    super.initState();
+  }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    var model = ref.watch(chatsDb);
-    log(model.contacts.toString());
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Contacts"),
-      ),
-      body: StreamBuilder(
-          stream: model.contacts,
-          builder: (_, AsyncSnapshot<List<Contact>> snapshot) {
-            if (snapshot.hasData) {
-              //
-              if (snapshot.data != null) {
-                return snapshot.data!.isNotEmpty
-                    ? ListView.builder(
-                        itemCount: snapshot.data?.length ?? 0,
-                        itemBuilder: (_, index) => Center(
-                            child: ListTile(
-                          title: Text(
-                            // snapshot.data![index].id.toString() +
-                            //     " " +
-                            snapshot.data![index].name,
-                          ),
-                        )),
-                      )
-                    : const Center(
-                        child: Text("Contacts list is Empty"),
-                      );
-              } else {
-                return const Center(
-                  child: Text("Snapshot Data is Null"),
-                );
-              }
-            } else {
-              return Center(
-                child: Text(
-                  snapshot.data.toString(),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+                child: StreamBuilder<List<Contact>>(
+              initialData: [],
+              stream: ContactsDB().getAllContacts(),
+              builder: (_, snapshot) {
+                return snapshot.data == null
+                    ? const Text("Null Data")
+                    : ListView.builder(
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          if (snapshot.hasData) {
+                            return ListTile(
+                              leading:
+                                  Text(snapshot.data![index].id.toString()),
+                              title: Text(snapshot.data![index].name),
+                              // subtitle: BuildMessageText(
+                              //     recieverID: snapshot.data![index].id),
+                            );
+                          }
+                          return Text(snapshot.connectionState.toString());
+                        });
+              },
+            )),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: () async {
+                    Faker faker = Faker();
+                    Message message = Message(
+                        id: 1,
+                        msg: faker.lorem.word(),
+                        recieverID: 2,
+                        senderID: 1);
+                    await MessagesDB().sendMessage(message);
+                  },
+                  child: const Text("Msg"),
                 ),
-              );
-            }
-          }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          ChatsDB().createContactI();
-        },
+                TextButton(
+                  onPressed: () async {
+                    Faker faker = Faker();
+                    Contact contact = Contact(name: faker.person.name(), id: 5);
+                    await ContactsDB().addContact(contact);
+                  },
+                  child: const Text("Add"),
+                ),
+                TextButton(
+                  onPressed: () async {},
+                  child: const Text("Edit"),
+                ),
+                TextButton(
+                  onPressed: () async {},
+                  child: const Text("Delete"),
+                ),
+              ],
+            )
+          ],
+        ),
       ),
     );
+  }
+}
+
+class BuildMessageText extends StatelessWidget {
+  final int recieverID;
+  const BuildMessageText({Key? key, required this.recieverID})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<Message?>(
+        stream: MessagesDB().getMessageForUser(recieverID),
+        builder: (_, snapshot) {
+          if (snapshot.data == null) {
+            return Text("No Last Message");
+          }
+          return Text(snapshot.data!.msg);
+        });
   }
 }
