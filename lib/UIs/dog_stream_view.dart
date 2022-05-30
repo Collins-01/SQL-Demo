@@ -13,6 +13,7 @@ class DogStreamView extends StatelessWidget {
           children: [
             Expanded(
                 child: StreamBuilder<List<Dog>>(
+              initialData: [],
               stream: _dogBriteDB.dogsList,
               builder: (_, snapshot) {
                 return snapshot.data == null
@@ -21,11 +22,13 @@ class DogStreamView extends StatelessWidget {
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
                           if (snapshot.hasData) {
-                            return Text(snapshot.data![index].name +
-                                "  " +
-                                snapshot.data![index].age.toString() +
-                                "  " +
-                                snapshot.data![index].id.toString());
+                            return Center(
+                              child: Text(snapshot.data![index].name +
+                                  "  " +
+                                  snapshot.data![index].age.toString() +
+                                  "  " +
+                                  snapshot.data![index].id.toString()),
+                            );
                           }
                           return Text(snapshot.connectionState.toString());
                         });
@@ -37,16 +40,21 @@ class DogStreamView extends StatelessWidget {
                 TextButton(
                   onPressed: () async {
                     await _dogBriteDB
-                        .insertDog(Dog(age: 2, id: 002, name: "Milo"));
+                        .insertDog(Dog(age: 10, id: 8, name: "Coco"));
                   },
                   child: const Text("Add Dog"),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    await _dogBriteDB
+                        .updateDog(Dog(age: 10, id: 2, name: "Jeff"));
+                  },
                   child: const Text("Update Dog"),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    await _dogBriteDB.deletDog(3);
+                  },
                   child: const Text("Delete Dog"),
                 ),
               ],
