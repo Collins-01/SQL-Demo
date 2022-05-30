@@ -56,18 +56,20 @@ class DogBriteDB extends ChangeNotifier {
         .update('dogs', dog.toJson(), where: 'id = ?', whereArgs: [dog.id]);
   }
 
-  //  _dogsList = _briteDb
-  //     .createQuery('dogs')
-  //     .mapToList((row) => Dog.fromJson(row))
-  //     .asBroadcastStream(
-  //   onCancel: (value) {
-  //     log("Stream has cancelled .... $value");
-  //   },
-  //   onListen: (val) {
-  //     log("onListen : ${val.toString()}");
-  //     val.onData((data) {
-  //       log(".onDat : ... ${data.toList()}");
-  //     });
-  //   },
-  // );
+  Future<void> getSingleDog(int id) async {
+    var res = _briteDb
+        .createQuery(
+          'dogs',
+          limit: 1,
+          where: 'id = ?',
+          whereArgs: [id],
+        )
+        .asBroadcastStream()
+        .mapToOne(
+          (row) => Dog.fromJson(row),
+        );
+    res.listen((e) {
+      log("Single Item : $e");
+    });
+  }
 }

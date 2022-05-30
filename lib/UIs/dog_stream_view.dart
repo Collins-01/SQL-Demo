@@ -57,6 +57,12 @@ class DogStreamView extends StatelessWidget {
                   },
                   child: const Text("Delete Dog"),
                 ),
+                TextButton(
+                  onPressed: () async {
+                    await _dogBriteDB.getSingleDog(8);
+                  },
+                  child: const Text("Get SIngle Dog"),
+                ),
               ],
             )
           ],
