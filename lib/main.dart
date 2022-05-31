@@ -10,9 +10,9 @@ import 'package:sql_demo/core/storage/dog_db.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  DogDB().init();
-  DogBriteDB().init();
-  ChatsDB().init();
+  // DogDB().init();
+  // DogBriteDB().init();
+  // ChatsDB().init();
   runApp(const ProviderScope(child: MyApp()));
 }
 

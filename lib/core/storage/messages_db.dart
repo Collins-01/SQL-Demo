@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:sql_demo/core/models/message_model.dart';
@@ -33,12 +34,16 @@ class MessagesDB {
     final db = await _dbFuture;
     yield* db
         .createQuery(DbKeys.messages)
-        .mapToList((json) => Message.fromJson(json))
-        .asBroadcastStream();
+        .asBroadcastStream()
+        .mapToList((json) => Message.fromJson(json));
     // .map((items) =>
     //     items.where((i) => i.id != null).toList(growable: false));
   }
 
+  final StreamController<Message?> _lastMessageStreamController =
+      StreamController.broadcast();
+  StreamController<Message?> get lastMessageStreamController =>
+      _lastMessageStreamController;
   Stream<Message?> getMessageForUser(int recieverID) async* {
     final db = await _dbFuture;
     var res = db.createQuery(
@@ -57,15 +62,31 @@ class MessagesDB {
       // ).mapToList(
       //   (json) => Message.fromJson(json),
       // ).last.asStream();
-      var e = res.mapToOne((row) => Message.fromJson(row)).asBroadcastStream();
-      e.listen((event) {
+      var a = res.asBroadcastStream().mapToOne((row) => Message.fromJson(row));
+
+      a.listen((event) {
         log(event.msg);
       });
-      yield* e;
+      yield* a;
     }
 
     // .map((items) =>
     //     items.where((i) => i.id != null).toList(growable: false));
+  }
+
+  getLastMessage(int id) async {
+    final db = await _dbFuture;
+    var res = db.createQuery(
+      DbKeys.messages,
+      where: 'recieverID = ?',
+      whereArgs: [id],
+    );
+    if (await res.isEmpty) {
+      _lastMessageStreamController.sink.add(null);
+    } else {
+      var a = res.asBroadcastStream().mapToOne((row) => Message.fromJson(row));
+      _lastMessageStreamController.sink.addStream(a);
+    }
   }
 
   Future<bool> sendMessage(Message message) async {

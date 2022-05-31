@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:sql_demo/core/models/contact_model.dart';
@@ -42,8 +44,8 @@ class _ContactsViewState extends State<ContactsView> {
                               leading:
                                   Text(snapshot.data![index].id.toString()),
                               title: Text(snapshot.data![index].name),
-                              // subtitle: BuildMessageText(
-                              //     recieverID: snapshot.data![index].id),
+                              subtitle: BuildMessageText(
+                                  recieverID: snapshot.data![index].id),
                             );
                           }
                           return Text(snapshot.connectionState.toString());
@@ -61,7 +63,8 @@ class _ContactsViewState extends State<ContactsView> {
                         msg: faker.lorem.word(),
                         recieverID: 2,
                         senderID: 1);
-                    await MessagesDB().sendMessage(message);
+                    // await MessagesDB().sendMessage(message);
+                    log(message.toJson().toString());
                   },
                   child: const Text("Msg"),
                 ),
@@ -90,20 +93,33 @@ class _ContactsViewState extends State<ContactsView> {
   }
 }
 
-class BuildMessageText extends StatelessWidget {
+class BuildMessageText extends StatefulWidget {
   final int recieverID;
   const BuildMessageText({Key? key, required this.recieverID})
       : super(key: key);
 
   @override
+  State<BuildMessageText> createState() => _BuildMessageTextState();
+}
+
+class _BuildMessageTextState extends State<BuildMessageText> {
+  @override
+  void initState() {
+    // MessagesDB().getLastMessage(widget.recieverID);
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return StreamBuilder<Message?>(
-        stream: MessagesDB().getMessageForUser(recieverID),
-        builder: (_, snapshot) {
-          if (snapshot.data == null) {
-            return Text("No Last Message");
-          }
-          return Text(snapshot.data!.msg);
-        });
+      stream: MessagesDB().getMessageForUser(widget.recieverID),
+      builder: (_, snapshot) {
+        log("Build Method ");
+        if (snapshot.data == null) {
+          return Text("No Last Message");
+        }
+        return Text(snapshot.data!.msg);
+      },
+    );
   }
 }

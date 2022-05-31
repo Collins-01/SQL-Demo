@@ -34,8 +34,8 @@ class ContactsDB {
     final db = await _dbFuture;
     yield* db
         .createQuery(DbKeys.contacts)
-        .mapToList((json) => Contact.fromJson(json))
-        .asBroadcastStream();
+        .asBroadcastStream()
+        .mapToList((json) => Contact.fromJson(json));
   }
 
   Future<bool> addContact(Contact contact) async {
