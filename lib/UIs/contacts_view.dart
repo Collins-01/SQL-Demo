@@ -82,7 +82,7 @@ class _ContactsViewState extends State<ContactsView> {
                 TextButton(
                   onPressed: () async {
                     Faker faker = Faker();
-                    Contact contact = Contact(name: faker.person.name(), id: 5);
+                    Contact contact = Contact(name: faker.person.name(), id: 4);
                     await ContactsDB().addContact(contact);
                   },
                   child: const Text("Add"),

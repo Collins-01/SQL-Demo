@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:sql_demo/core/models/message_model.dart';
+import 'package:sql_demo/core/services/auth_service.dart';
 import 'package:sql_demo/core/storage/db_keys.dart';
 import 'package:sqlbrite/sqlbrite.dart';
 
@@ -44,8 +45,8 @@ class MessagesDB {
     final db = await _dbFuture;
     yield* db.createQuery(
       DbKeys.messages,
-      where: 'recieverID = ?',
-      whereArgs: [recieverID],
+      where: 'recieverID = ? AND senderID = ?',
+      whereArgs: [recieverID, AuthService.user.id],
     ).mapToList(
       (json) => Message.fromJson(json),
     );

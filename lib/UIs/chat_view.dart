@@ -1,4 +1,3 @@
-import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:sql_demo/core/models/contact_model.dart';
 import 'package:sql_demo/core/models/message_model.dart';
@@ -58,20 +57,21 @@ class _ChatViewState extends State<ChatView> {
                             ),
                           ),
                           IconButton(
-                              onPressed: () async {
-                                if (controller.text.isEmpty) {
-                                  return;
-                                }
-                                Message message = Message(
-                                  id: DateTime.now().millisecondsSinceEpoch,
-                                  msg: controller.text,
-                                  recieverID: AuthService.user.id,
-                                  senderID: widget.contact.id,
-                                );
-                                await MessagesDB().sendMessage(message);
-                                controller.clear();
-                              },
-                              icon: const Icon(Icons.send))
+                            onPressed: () async {
+                              if (controller.text.isEmpty) {
+                                return;
+                              }
+                              Message message = Message(
+                                id: DateTime.now().millisecondsSinceEpoch,
+                                msg: controller.text,
+                                recieverID: widget.contact.id,
+                                senderID: AuthService.user.id,
+                              );
+                              await MessagesDB().sendMessage(message);
+                              controller.clear();
+                            },
+                            icon: const Icon(Icons.send),
+                          )
                         ],
                       ),
                     )
@@ -80,9 +80,10 @@ class _ChatViewState extends State<ChatView> {
               } else {
                 return Column(
                   children: [
-                    const Expanded(
+                    Expanded(
                       child: Center(
-                        child: Text("Empty List"),
+                        child: Text(
+                            "No Conversations with ${widget.contact.name}"),
                       ),
                     ),
                     SafeArea(
@@ -99,11 +100,13 @@ class _ChatViewState extends State<ChatView> {
                                   return;
                                 }
                                 Message message = Message(
-                                    id: DateTime.now().millisecondsSinceEpoch,
-                                    msg: controller.text,
-                                    recieverID: 1,
-                                    senderID: widget.contact.id);
+                                  id: DateTime.now().millisecondsSinceEpoch,
+                                  msg: controller.text,
+                                  recieverID: widget.contact.id,
+                                  senderID: AuthService.user.id,
+                                );
                                 await MessagesDB().sendMessage(message);
+                                controller.clear();
                               },
                               icon: const Icon(Icons.send))
                         ],
