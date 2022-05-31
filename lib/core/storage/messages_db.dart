@@ -43,13 +43,13 @@ class MessagesDB {
 
   Stream<List<Message>> getMessageForUser(int recieverID) async* {
     final db = await _dbFuture;
-    yield* db.createQuery(
-      DbKeys.messages,
-      where: 'recieverID = ? AND senderID = ?',
-      whereArgs: [recieverID, AuthService.user.id],
-    ).mapToList(
-      (json) => Message.fromJson(json),
-    );
+
+    yield* db
+        .createRawQuery([
+          DbKeys.messages
+        ], "SELECT * FROM ${DbKeys.messages} WHERE recieverID = $recieverID AND senderID = ${AuthService.user.id}")
+        .asBroadcastStream()
+        .mapToList((row) => Message.fromJson(row));
   }
 
   Future<bool> sendMessage(Message message) async {

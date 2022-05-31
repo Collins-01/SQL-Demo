@@ -40,7 +40,9 @@ class _ChatViewState extends State<ChatView> {
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
                           return ListTile(
-                            title: Text(snapshot.data![index].msg),
+                            title: Text(
+                              snapshot.data![index].msg,
+                            ),
                             subtitle: Text(
                               snapshot.data![index].senderID.toString(),
                             ),
@@ -64,8 +66,8 @@ class _ChatViewState extends State<ChatView> {
                               Message message = Message(
                                 id: DateTime.now().millisecondsSinceEpoch,
                                 msg: controller.text,
-                                recieverID: widget.contact.id,
-                                senderID: AuthService.user.id,
+                                recieverID: AuthService.user.id,
+                                senderID: widget.contact.id,
                               );
                               await MessagesDB().sendMessage(message);
                               controller.clear();
