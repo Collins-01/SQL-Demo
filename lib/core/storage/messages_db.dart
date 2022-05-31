@@ -40,53 +40,15 @@ class MessagesDB {
     //     items.where((i) => i.id != null).toList(growable: false));
   }
 
-  final StreamController<Message?> _lastMessageStreamController =
-      StreamController.broadcast();
-  StreamController<Message?> get lastMessageStreamController =>
-      _lastMessageStreamController;
-  Stream<Message?> getMessageForUser(int recieverID) async* {
+  Stream<List<Message>> getMessageForUser(int recieverID) async* {
     final db = await _dbFuture;
-    var res = db.createQuery(
+    yield* db.createQuery(
       DbKeys.messages,
       where: 'recieverID = ?',
       whereArgs: [recieverID],
+    ).mapToList(
+      (json) => Message.fromJson(json),
     );
-
-    if (await res.isEmpty) {
-      yield null;
-    } else {
-      // yield db.createQuery(
-      //   DbKeys.messages,
-      //   where: 'recieverID = ?',
-      //   whereArgs: [recieverID],
-      // ).mapToList(
-      //   (json) => Message.fromJson(json),
-      // ).last.asStream();
-      var a = res.asBroadcastStream().mapToOne((row) => Message.fromJson(row));
-
-      a.listen((event) {
-        log(event.msg);
-      });
-      yield* a;
-    }
-
-    // .map((items) =>
-    //     items.where((i) => i.id != null).toList(growable: false));
-  }
-
-  getLastMessage(int id) async {
-    final db = await _dbFuture;
-    var res = db.createQuery(
-      DbKeys.messages,
-      where: 'recieverID = ?',
-      whereArgs: [id],
-    );
-    if (await res.isEmpty) {
-      _lastMessageStreamController.sink.add(null);
-    } else {
-      var a = res.asBroadcastStream().mapToOne((row) => Message.fromJson(row));
-      _lastMessageStreamController.sink.addStream(a);
-    }
   }
 
   Future<bool> sendMessage(Message message) async {

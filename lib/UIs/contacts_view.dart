@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
+import 'package:sql_demo/UIs/chat_view.dart';
 import 'package:sql_demo/core/models/contact_model.dart';
 
 import 'package:sql_demo/core/models/message_model.dart';
@@ -26,6 +27,9 @@ class _ContactsViewState extends State<ContactsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Contacts"),
+      ),
       body: SafeArea(
         child: Column(
           children: [
@@ -41,6 +45,13 @@ class _ContactsViewState extends State<ContactsView> {
                         itemBuilder: (context, index) {
                           if (snapshot.hasData) {
                             return ListTile(
+                              onTap: () => Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => ChatView(
+                                    contact: snapshot.data![index],
+                                  ),
+                                ),
+                              ),
                               leading:
                                   Text(snapshot.data![index].id.toString()),
                               title: Text(snapshot.data![index].name),
@@ -59,11 +70,11 @@ class _ContactsViewState extends State<ContactsView> {
                   onPressed: () async {
                     Faker faker = Faker();
                     Message message = Message(
-                        id: 1,
+                        id: 4,
                         msg: faker.lorem.word(),
                         recieverID: 2,
                         senderID: 1);
-                    // await MessagesDB().sendMessage(message);
+                    await MessagesDB().sendMessage(message);
                     log(message.toJson().toString());
                   },
                   child: const Text("Msg"),
@@ -106,20 +117,24 @@ class _BuildMessageTextState extends State<BuildMessageText> {
   @override
   void initState() {
     // MessagesDB().getLastMessage(widget.recieverID);
+    // MessagesDB().lastMessageStreamController.stream.listen((event) {
+    //   log("Data ---------${event?.msg} ");
+    // });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<Message?>(
-      stream: MessagesDB().getMessageForUser(widget.recieverID),
-      builder: (_, snapshot) {
-        log("Build Method ");
-        if (snapshot.data == null) {
-          return Text("No Last Message");
-        }
-        return Text(snapshot.data!.msg);
-      },
-    );
+    return const Text("No Msg");
+    // return StreamBuilder<Message?>(
+    //   stream: MessagesDB().getMessageForUser(widget.recieverID),
+    //   builder: (_, snapshot) {
+    //     log("Build Method ");
+    //     if (snapshot.data == null) {
+    //       return Text("No Last Message");
+    //     }
+    //     return Text(snapshot.data!.msg);
+    //   },
+    // );
   }
 }

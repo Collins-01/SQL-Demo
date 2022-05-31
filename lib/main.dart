@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sql_demo/UIs/contacts_view.dart';
-import 'package:sql_demo/UIs/dog_stream_view.dart';
-import 'package:sql_demo/UIs/dog_view.dart';
-import 'package:sql_demo/UIs/messages_view.dart';
-import 'package:sql_demo/core/storage/chats_db.dart';
-import 'package:sql_demo/core/storage/dog_brite_db.dart';
-import 'package:sql_demo/core/storage/dog_db.dart';
+// import 'package:sql_demo/UIs/dog_stream_view.dart';
+// import 'package:sql_demo/UIs/dog_view.dart';
+// import 'package:sql_demo/UIs/messages_view.dart';
+// import 'package:sql_demo/core/storage/chats_db.dart';
+// import 'package:sql_demo/core/storage/dog_brite_db.dart';
+// import 'package:sql_demo/core/storage/dog_db.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,7 +23,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: ' SQL Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
